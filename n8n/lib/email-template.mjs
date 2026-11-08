@@ -59,24 +59,25 @@ export function shellParts({ preheader, eyebrow, ctaLabel, footerNote }) {
 }
 
 /** Opt-in: allow practice reminder emails; opt out anytime after confirming. */
-export function confirmEmailHtml() {
+export function confirmEmailHtml(kind = "contact") {
   const { open, afterTitle, bodyOpen, bodyClose, cta, css: c } = shellParts({
     preheader: 'Confirm to get Handshake practice reminders. You can opt out anytime.',
     eyebrow: 'Permission needed',
     ctaLabel: 'Allow practice reminders',
     footerNote: '',
   });
-  const setup = "const url=$vars.HANDSHAKE_LINK_ORIGIN+'/webhook/handshake-confirm?token='+$json.result.token";
+  const setup = `const url=$vars.HANDSHAKE_LINK_ORIGIN+'/webhook/${kind === "learner" ? "handshake-learner-confirm" : "handshake-confirm"}?token='+${kind === "learner" ? "$('Persist subscription').first().json.result.learnerToken" : "$json.result.token"}`;
   return htmlExpr(setup, [
     open,
     'Allow practice reminders?',
     afterTitle,
     bodyOpen,
-    "<p style='margin:0 0 12px'>Someone entered your email so Handshake can send friendly reminders to get back into ASL practice — like a nudge when it has been a while.</p>",
+    kind === "learner" ? "<p style='margin:0 0 12px'>Confirm your email to receive weekly ASL practice recaps from Handshake.</p>" : "<p style='margin:0 0 12px'>Someone entered your email to receive updates when they complete ASL lessons on Handshake.</p>",
     "<p style='margin:0 0 12px'>Confirm only if you want those reminders. You can opt out anytime from any email we send.</p>",
     "<p style='margin:0'>If this was unexpected, ignore this message and you will get nothing.</p>",
     bodyClose,
     ...cta('url'),
+    { v: kind === 'contact' ? "($json.result.learnerIncluded ? '<p>For your own weekly recaps, separately confirm: <a href=\"'+$vars.HANDSHAKE_LINK_ORIGIN+'/webhook/handshake-learner-confirm?token='+$json.result.learnerToken+'\">Confirm weekly recaps</a></p>' : '')" : "''" },
     `<hr style='border:none;border-top:1px solid ${c.line};margin:32px 0 18px'>`,
     `<p style='margin:0;font-size:13px;line-height:1.55;color:${c.muted}'>No confirmation = no emails. Opt out anytime after you confirm.</p>`,
     `</td></tr></table>`,
@@ -85,11 +86,11 @@ export function confirmEmailHtml() {
   ]);
 }
 
-/** Export/test stub only — live lesson webhook no longer emails. */
+/** Lesson completion update for a confirmed contact. */
 export function lessonEmailHtml() {
   const { open, afterTitle, bodyOpen, bodyClose, footer } = shellParts({
-    preheader: 'Practice reminder',
-    eyebrow: 'Practice',
+    preheader: 'An ASL lesson completed on Handshake.',
+    eyebrow: 'Lesson completed',
     ctaLabel: 'Open Handshake',
     footerNote: 'You can opt out anytime.',
   });
@@ -100,7 +101,7 @@ export function lessonEmailHtml() {
     { v: 'title' },
     afterTitle,
     bodyOpen,
-    "<p style='margin:0'>Spell your name practice reminder placeholder.</p>",
+    "<p style='margin:0'>Someone you support completed this ASL lesson on Handshake. Thank you for being part of their learning journey.</p>",
     bodyClose,
     ...footer('stop', 'Opt out of lesson updates'),
   ]);

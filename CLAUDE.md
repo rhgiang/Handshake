@@ -23,8 +23,8 @@ docs/superpowers/specs/2026-11-07-sponsor-tracks-spec.md. Plan: docs/superpowers
 - Express API (`backend/index.mjs`) proxies Gemini via @google/genai. API key lives in the repo-root `.env` only (the backend reads it). The API no longer serves the frontend (`SERVE_STATIC` is removed).
 - Optional, env-gated server pieces: `backend/precache.json` (cached coach/word replies, labelled "cached"; mock
   until a live run), Maritime planner agent in `agent/` behind `/api/plan` with a local fallback, n8n
-  notifications (`backend/routes/notify.mjs`, `n8n/README.md`; consent first, double opt-in for the contact is
-  specified but not built), `#/stats` page, Vultr API-only Caddy + systemd deploy in `backend/deploy/`.
+  notifications (`backend/routes/notify.mjs`, `n8n/README.md`; consent first, contact and learner double opt-in workflows are implemented;
+  see `docs/evidence/2026-11-08-integration-gaps.md` for live verification and remaining external requirements), `#/stats` page, Vultr API-only Caddy + systemd deploy in `backend/deploy/`.
 - Run everything: `npm run dev` (repo root) → web on :5173, API on :8787 (Vite proxies `/api` to http://localhost:8787). `npm run build` builds the frontend; `npm test` runs frontend + backend + agent + deploy tests; `npm run test:n8n` runs the n8n tests.
 - The browser calls the Vultr HTTPS API **directly** (no Vercel rewrite: behind a rewrite every visitor would share Vercel's IP at the API, collapsing per-IP rate limits into one bucket). The frontend build reads `VITE_API_BASE_URL` (e.g. `https://203-0-113-10.sslip.io`, set in the Vercel project's Environment Variables); when unset it uses relative `/api/*` (local dev, where Vite proxies `/api`). `VITE_API_BASE_URL` is public (browser-visible), never a secret. The API enables CORS only for origins listed in env `ALLOWED_ORIGIN` (comma-separated exact origins, e.g. the production Vercel URL; unset = no CORS headers; methods GET/POST/OPTIONS, header Content-Type). Status: implemented in code, not yet verified against a live deployment.
 

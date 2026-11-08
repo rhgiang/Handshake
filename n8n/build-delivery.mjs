@@ -18,27 +18,25 @@ export function lessonWorkflow(){return workflow('Handshake lesson complete',[
  condition('Lesson eligible','={{ $json.result.send === true }}'),
  sql('Recheck lesson','select handshake.lesson_recheck($1,$2::uuid) as result',"={{ [$('Claim lesson').item.json.result.learnerId, $('Claim lesson').item.json.result.lease] }}"),
  condition('Contact still subscribed','={{ $json.result.send === true }}'),
- // Kept for tests/export shape; not connected — we do practice reminders, not “lesson finished” pings.
  mail(
   'Send lesson',
-  '={{ $("Claim lesson").item.json.result.title + " — practice reminder" }}',
-  '={{ $("Claim lesson").item.json.result.title + " — practice reminder.\\n\\nSpell your name practice reminder placeholder.\\n\\nOpt out: " + $vars.HANDSHAKE_LINK_ORIGIN + "/webhook/handshake-unsubscribe?token=" + encodeURIComponent($json.result.unsubscribeToken) }}',
+  '={{ $("Claim lesson").item.json.result.title + " — lesson completed" }}',
+  '={{ $("Claim lesson").item.json.result.title + " — lesson completed.\\n\\nSomeone you support completed this ASL lesson on Handshake.\\n\\nOpt out: " + $vars.HANDSHAKE_LINK_ORIGIN + "/webhook/handshake-unsubscribe?token=" + encodeURIComponent($json.result.unsubscribeToken) }}',
   lessonEmailHtml(),
  ),
- sql('Skip notify','select handshake.lesson_finish($1,$2::uuid,false)',"={{ [$('Claim lesson').item.json.result.learnerId, $('Claim lesson').item.json.result.lease] }}"),
  sql('Lesson sent','select handshake.lesson_finish($1,$2::uuid,true)',"={{ [$('Claim lesson').item.json.result.learnerId, $('Claim lesson').item.json.result.lease] }}"),
  sql('Lesson failed','select handshake.lesson_finish($1,$2::uuid,false)',"={{ [$('Claim lesson').item.json.result.learnerId, $('Claim lesson').item.json.result.lease] }}"),
  respond('Lesson response',200),
  respond('Claim response','={{ $json.result.status }}','={{ {ok:$json.result.status < 400} }}'),
  respond('SMTP failure',503,'={{ {ok:false,reason:"delivery_failed"} }}'),
- ],[['Lesson webhook','Claim lesson'],['Claim lesson','Lesson eligible'],['Lesson eligible','Recheck lesson'],['Lesson eligible','Claim response',1],['Recheck lesson','Contact still subscribed'],['Contact still subscribed','Skip notify'],['Contact still subscribed','Lesson response',1],['Skip notify','Lesson response'],['Send lesson','Lesson sent'],['Send lesson','Lesson failed',1],['Lesson sent','Lesson response'],['Lesson failed','SMTP failure']]);}
-export function recapWorkflow(){return workflow('Handshake weekly operator-only recap',[
+ ],[['Lesson webhook','Claim lesson'],['Claim lesson','Lesson eligible'],['Lesson eligible','Recheck lesson'],['Lesson eligible','Claim response',1],['Recheck lesson','Contact still subscribed'],['Contact still subscribed','Send lesson'],['Contact still subscribed','Lesson response',1],['Send lesson','Lesson sent'],['Send lesson','Lesson failed',1],['Lesson sent','Lesson response'],['Lesson failed','SMTP failure']]);}
+export function recapWorkflow(){return workflow('Handshake weekly confirmed-learner recap',[
  node('Monday UTC','scheduleTrigger',{rule:{interval:[{field:'cronExpression',expression:'0 17 * * 1'}]}},1.2),
  node('Manual operator test','manualTrigger',{},1,{disabled:true}),
- sql('Claim recaps','select handshake.recap_claim($1) as result','={{ [$vars.HANDSHAKE_RECAP_TEST_EMAIL || ""] }}'),
+ sql('Claim recaps','select handshake.confirmed_recap_claim() as result','={{ [] }}'),
  node('Fetch stats','httpRequest',{url:'={{ $vars.HANDSHAKE_APP_ORIGIN + "/api/stats/" + encodeURIComponent($json.result.learnerId) }}',options:{timeout:10000,response:{response:{responseFormat:'json'}}}},4.2),
  sql('Weighted stats','select handshake.recap_stats($1::jsonb) as result','={{ [JSON.stringify($json)] }}'),
- sql('Recheck recap','select handshake.recap_recheck($1,$2::uuid,$3) as result',"={{ [$('Claim recaps').item.json.result.learnerId, $('Claim recaps').item.json.result.lease, $vars.HANDSHAKE_RECAP_TEST_EMAIL || ''] }}"),
+ sql('Recheck recap','select handshake.confirmed_recap_recheck($1,$2::uuid) as result',"={{ [$('Claim recaps').item.json.result.learnerId, $('Claim recaps').item.json.result.lease] }}"),
  condition('Learner still subscribed','={{ $json.result.send === true }}'),
  mail(
   'Send recap',

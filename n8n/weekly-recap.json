@@ -1,5 +1,5 @@
 {
-  "name": "Handshake weekly operator-only recap",
+  "name": "Handshake weekly confirmed-learner recap",
   "active": false,
   "nodes": [
     {
@@ -45,9 +45,9 @@
       ],
       "parameters": {
         "operation": "executeQuery",
-        "query": "select handshake.recap_claim($1) as result",
+        "query": "select handshake.confirmed_recap_claim() as result",
         "options": {
-          "queryReplacement": "={{ [$vars.HANDSHAKE_RECAP_TEST_EMAIL || \"\"] }}"
+          "queryReplacement": "={{ [] }}"
         }
       }
     },
@@ -100,9 +100,9 @@
       ],
       "parameters": {
         "operation": "executeQuery",
-        "query": "select handshake.recap_recheck($1,$2::uuid,$3) as result",
+        "query": "select handshake.confirmed_recap_recheck($1,$2::uuid) as result",
         "options": {
-          "queryReplacement": "={{ [$('Claim recaps').item.json.result.learnerId, $('Claim recaps').item.json.result.lease, $vars.HANDSHAKE_RECAP_TEST_EMAIL || ''] }}"
+          "queryReplacement": "={{ [$('Claim recaps').item.json.result.learnerId, $('Claim recaps').item.json.result.lease] }}"
         }
       }
     },

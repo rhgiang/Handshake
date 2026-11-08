@@ -29,7 +29,7 @@
       ],
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT handshake.subscribe($1::jsonb) AS result",
+        "query": "SELECT handshake.subscribe_verified($1::jsonb) AS result",
         "options": {
           "queryReplacement": "={{ [JSON.stringify($json.body)] }}"
         }
@@ -82,8 +82,8 @@
         "toEmail": "={{ $json.result.email }}",
         "subject": "Allow practice reminders?",
         "emailFormat": "both",
-        "text": "={{ 'Allow practice reminders?\\n\\nSomeone entered your email so Handshake can send friendly reminders to get back into ASL practice. Confirm: ' + $vars.HANDSHAKE_LINK_ORIGIN + '/webhook/handshake-confirm?token=' + $json.result.token + '. You can opt out anytime after confirming. Ignore this email to receive nothing.' }}",
-        "html": "={{ (() => { const url=$vars.HANDSHAKE_LINK_ORIGIN+'/webhook/handshake-confirm?token='+$json.result.token; return \"<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width'><title>Handshake</title></head><body style='margin:0;padding:0;background:#f4f7f9;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;color:#0b1f33'><div style='display:none;max-height:0;overflow:hidden;opacity:0;color:transparent'>Confirm to get Handshake practice reminders. You can opt out anytime.</div><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#f4f7f9;padding:40px 16px'><tr><td align='center'><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='max-width:560px;background:#ffffff;border:1px solid #d7e0e8;border-radius:16px;overflow:hidden'><tr><td style='height:4px;background:#0f766e;font-size:0;line-height:0'>&nbsp;</td></tr><tr><td style='padding:28px 32px 8px'><p style='margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#0f766e'>Handshake</p><p style='margin:10px 0 0;font-size:13px;color:#5b6b7c'>Permission needed</p><h1 style='margin:14px 0 0;font-size:28px;line-height:1.25;font-weight:650;letter-spacing:-0.02em;color:#0b1f33'>\" + \"Allow practice reminders?\" + \"</h1>\" + \"<div style='margin:18px 0 0;font-size:16px;line-height:1.6;color:#0b1f33'>\" + \"<p style='margin:0 0 12px'>Someone entered your email so Handshake can send friendly reminders to get back into ASL practice — like a nudge when it has been a while.</p>\" + \"<p style='margin:0 0 12px'>Confirm only if you want those reminders. You can opt out anytime from any email we send.</p>\" + \"<p style='margin:0'>If this was unexpected, ignore this message and you will get nothing.</p>\" + \"</div>\" + \"<p style='margin:28px 0 0'><a href='\" + String(url) + \"' style='display:inline-block;background:#0f766e;color:#ffffff;text-decoration:none;padding:14px 22px;border-radius:10px;font-size:15px;font-weight:600'>Allow practice reminders</a></p>\" + \"<hr style='border:none;border-top:1px solid #d7e0e8;margin:32px 0 18px'>\" + \"<p style='margin:0;font-size:13px;line-height:1.55;color:#5b6b7c'>No confirmation = no emails. Opt out anytime after you confirm.</p>\" + \"</td></tr></table>\" + \"<p style='margin:18px 0 0;font-size:11px;line-height:1.4;color:#5b6b7c;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif'>Handshake · practice reminders</p>\" + \"</td></tr></table></body></html>\"; })() }}",
+        "text": "={{ 'Allow practice reminders?\\n\\nSomeone entered your email so Handshake can send friendly reminders to get back into ASL practice. Confirm: ' + $vars.HANDSHAKE_LINK_ORIGIN + '/webhook/handshake-confirm?token=' + $json.result.token + '. You can opt out anytime after confirming. Ignore this email to receive nothing.' + ($json.result.learnerIncluded ? ' Also confirm weekly recaps for yourself: ' + $vars.HANDSHAKE_LINK_ORIGIN + '/webhook/handshake-learner-confirm?token=' + $json.result.learnerToken : '') }}",
+        "html": "={{ (() => { const url=$vars.HANDSHAKE_LINK_ORIGIN+'/webhook/handshake-confirm?token='+$json.result.token; return \"<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width'><title>Handshake</title></head><body style='margin:0;padding:0;background:#f4f7f9;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;color:#0b1f33'><div style='display:none;max-height:0;overflow:hidden;opacity:0;color:transparent'>Confirm to get Handshake practice reminders. You can opt out anytime.</div><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#f4f7f9;padding:40px 16px'><tr><td align='center'><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='max-width:560px;background:#ffffff;border:1px solid #d7e0e8;border-radius:16px;overflow:hidden'><tr><td style='height:4px;background:#0f766e;font-size:0;line-height:0'>&nbsp;</td></tr><tr><td style='padding:28px 32px 8px'><p style='margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#0f766e'>Handshake</p><p style='margin:10px 0 0;font-size:13px;color:#5b6b7c'>Permission needed</p><h1 style='margin:14px 0 0;font-size:28px;line-height:1.25;font-weight:650;letter-spacing:-0.02em;color:#0b1f33'>\" + \"Allow practice reminders?\" + \"</h1>\" + \"<div style='margin:18px 0 0;font-size:16px;line-height:1.6;color:#0b1f33'>\" + \"<p style='margin:0 0 12px'>Someone entered your email to receive updates when they complete ASL lessons on Handshake.</p>\" + \"<p style='margin:0 0 12px'>Confirm only if you want those reminders. You can opt out anytime from any email we send.</p>\" + \"<p style='margin:0'>If this was unexpected, ignore this message and you will get nothing.</p>\" + \"</div>\" + \"<p style='margin:28px 0 0'><a href='\" + String(url) + \"' style='display:inline-block;background:#0f766e;color:#ffffff;text-decoration:none;padding:14px 22px;border-radius:10px;font-size:15px;font-weight:600'>Allow practice reminders</a></p>\" + String(($json.result.learnerIncluded ? '<p>For your own weekly recaps, separately confirm: <a href=\"'+$vars.HANDSHAKE_LINK_ORIGIN+'/webhook/handshake-learner-confirm?token='+$json.result.learnerToken+'\">Confirm weekly recaps</a></p>' : '')) + \"<hr style='border:none;border-top:1px solid #d7e0e8;margin:32px 0 18px'>\" + \"<p style='margin:0;font-size:13px;line-height:1.55;color:#5b6b7c'>No confirmation = no emails. Opt out anytime after you confirm.</p>\" + \"</td></tr></table>\" + \"<p style='margin:18px 0 0;font-size:11px;line-height:1.4;color:#5b6b7c;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif'>Handshake · practice reminders</p>\" + \"</td></tr></table></body></html>\"; })() }}",
         "options": {
           "appendAttribution": false
         }
@@ -100,9 +100,113 @@
       ],
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT handshake.confirmation_sent($1) AS result",
+        "query": "SELECT handshake.confirmation_sent($1) AS result, handshake.learner_confirmation_sent($2) AS learner_result",
         "options": {
-          "queryReplacement": "={{ [ $('Persist subscription').first().json.result.token ] }}"
+          "queryReplacement": "={{ [ $('Persist subscription').first().json.result.token, $('Persist subscription').first().json.result.learnerIncluded ? $('Persist subscription').first().json.result.learnerToken : null ] }}"
+        }
+      }
+    },
+    {
+      "id": "subscription-accepted",
+      "name": "Subscription accepted",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        100
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ok",
+              "leftValue": "={{ $('Persist subscription').first().json.result.ok === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "learner-confirmation-required",
+      "name": "Learner confirmation required",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1100,
+        100
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "learner-send",
+              "leftValue": "={{ $('Persist subscription').first().json.result.learnerSend === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "send-learner-confirmation",
+      "name": "Send learner confirmation",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1300,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "={{ $vars.HANDSHAKE_FROM_EMAIL }}",
+        "toEmail": "={{ $('Persist subscription').first().json.result.learnerEmail }}",
+        "subject": "Confirm your Handshake practice recaps",
+        "emailFormat": "both",
+        "text": "={{ 'Confirm your email to receive weekly ASL practice recaps: ' + $vars.HANDSHAKE_LINK_ORIGIN + '/webhook/handshake-learner-confirm?token=' + $('Persist subscription').first().json.result.learnerToken + '. Ignore this message to receive no recaps.' }}",
+        "html": "={{ (() => { const url=$vars.HANDSHAKE_LINK_ORIGIN+'/webhook/handshake-learner-confirm?token='+$('Persist subscription').first().json.result.learnerToken; return \"<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width'><title>Handshake</title></head><body style='margin:0;padding:0;background:#f4f7f9;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;color:#0b1f33'><div style='display:none;max-height:0;overflow:hidden;opacity:0;color:transparent'>Confirm to get Handshake practice reminders. You can opt out anytime.</div><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#f4f7f9;padding:40px 16px'><tr><td align='center'><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='max-width:560px;background:#ffffff;border:1px solid #d7e0e8;border-radius:16px;overflow:hidden'><tr><td style='height:4px;background:#0f766e;font-size:0;line-height:0'>&nbsp;</td></tr><tr><td style='padding:28px 32px 8px'><p style='margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#0f766e'>Handshake</p><p style='margin:10px 0 0;font-size:13px;color:#5b6b7c'>Permission needed</p><h1 style='margin:14px 0 0;font-size:28px;line-height:1.25;font-weight:650;letter-spacing:-0.02em;color:#0b1f33'>\" + \"Allow practice reminders?\" + \"</h1>\" + \"<div style='margin:18px 0 0;font-size:16px;line-height:1.6;color:#0b1f33'>\" + \"<p style='margin:0 0 12px'>Confirm your email to receive weekly ASL practice recaps from Handshake.</p>\" + \"<p style='margin:0 0 12px'>Confirm only if you want those reminders. You can opt out anytime from any email we send.</p>\" + \"<p style='margin:0'>If this was unexpected, ignore this message and you will get nothing.</p>\" + \"</div>\" + \"<p style='margin:28px 0 0'><a href='\" + String(url) + \"' style='display:inline-block;background:#0f766e;color:#ffffff;text-decoration:none;padding:14px 22px;border-radius:10px;font-size:15px;font-weight:600'>Allow practice reminders</a></p>\" + String('') + \"<hr style='border:none;border-top:1px solid #d7e0e8;margin:32px 0 18px'>\" + \"<p style='margin:0;font-size:13px;line-height:1.55;color:#5b6b7c'>No confirmation = no emails. Opt out anytime after you confirm.</p>\" + \"</td></tr></table>\" + \"<p style='margin:18px 0 0;font-size:11px;line-height:1.4;color:#5b6b7c;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif'>Handshake · practice reminders</p>\" + \"</td></tr></table></body></html>\"; })() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      }
+    },
+    {
+      "id": "acknowledge-learner-confirmation",
+      "name": "Acknowledge learner confirmation",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1500,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT handshake.learner_confirmation_sent($1) AS result",
+        "options": {
+          "queryReplacement": "={{ [ $('Persist subscription').first().json.result.learnerToken ] }}"
         }
       }
     },
@@ -199,7 +303,7 @@
         ],
         [
           {
-            "node": "Subscription result",
+            "node": "Subscription accepted",
             "type": "main",
             "index": 0
           }
@@ -218,6 +322,64 @@
       ]
     },
     "Acknowledge confirmation": {
+      "main": [
+        [
+          {
+            "node": "Learner confirmation required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subscription accepted": {
+      "main": [
+        [
+          {
+            "node": "Learner confirmation required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subscription result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Learner confirmation required": {
+      "main": [
+        [
+          {
+            "node": "Send learner confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Saved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send learner confirmation": {
+      "main": [
+        [
+          {
+            "node": "Acknowledge learner confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Acknowledge learner confirmation": {
       "main": [
         [
           {

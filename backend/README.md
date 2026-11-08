@@ -79,7 +79,7 @@ templates must never bypass this gate.
 
 The default model is `gemini-3.6-flash`, selected from the key's model-list
 response with `generateContent` support. `GEMINI_MODEL` can override it.
-`backend/gemini.mjs` retries HTTP 429, 500, 502, 503 and 504, plus local attempt
+`backend/gemini.mjs` retries HTTP 500, 502, 503 and 504, plus local attempt
 timeouts: at most three retries after the first request. Full jitter uses
 exponentially growing 200/400/800 ms delay caps. Each attempt has a local 6 s
 abort timer; the entire operation, including delays, is capped at 12 s so the
@@ -88,3 +88,16 @@ budget can shorten the number of retries on slow failures. SDK retries are
 disabled, and each attempted generation counts toward the 30/minute limit.
 Logs contain only HTTP status, attempt number, retry decision, and a fixed
 failure category. They exclude raw provider messages, URLs, prompts and keys.
+
+A provider HTTP 429 stops retries immediately and pauses outbound calls for that
+AI client/model across all endpoints. Google RetryInfo supplies the cooldown
+when available; the delay is at least 60 seconds and at most 24 hours, with a
+60-second default when metadata is missing or malformed. Paused calls use the
+existing local fallbacks without consuming provider-call budget. Successful
+cache hits are still served. Cooldown state is in memory and resets on restart;
+requests already in flight are not cancelled by another request's quota error.
+
+The frontend fetches explanations only for the displayed letter and refreshes
+practice words for at most the next incomplete alphabet lesson. Other saved
+practice words are preserved; completing the alphabet stops background word
+refresh requests.

@@ -114,13 +114,15 @@ test("rejects malformed and oversized batches atomically; ignores extra personal
   });
 });
 
-test("a database failure returns empty stats and logs no provider secrets", async (t) => {
+test("a database failure returns 503 instead of empty history and logs no provider secrets", async (t) => {
   const logs = [];
   t.mock.method(console, "error", (...args) => logs.push(args.join(" ")));
   const failure = async () => { throw new Error("postgres://private:password@host/db"); };
   await withApp({ db: { insertAttempts: failure, stats: failure } }, async (s) => {
     assert.equal((await s.post("/api/attempts", { learnerId: id, attempts: [{ item: "L", correct: true }] })).status, 204);
-    assert.deepEqual((await s.get(`/api/stats/${id}`)).body, { daily: [], items: [] });
+    const stats = await s.get(`/api/stats/${id}`);
+    assert.equal(stats.status, 503);
+    assert.deepEqual(stats.body, { error: "stats_unavailable" });
   });
   assert.equal(logs.length, 2);
   assert.doesNotMatch(logs.join(" "), /private|password|postgres:/);
@@ -149,5 +151,14 @@ test("malformed JSON is rate-limited before body parsing", async () => {
     });
     assert.equal(response.status, 429);
     assert.deepEqual(await response.json(), { error: "rate_limited" });
+  });
+});
+
+
+test('a reachable database with no practice history returns a successful empty result', async () => {
+  await withApp({ db: { stats: async () => ({ daily: [], items: [] }) } }, async s => {
+    const r = await s.get(`/api/stats/${id}`);
+    assert.equal(r.status, 200);
+    assert.deepEqual(r.body, { daily: [], items: [] });
   });
 });

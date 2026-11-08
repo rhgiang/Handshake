@@ -123,7 +123,6 @@ function Player({ lessonId }: { lessonId: string }) {
   const [turn, setTurn] = useState(0); // which exchange of a conversation scene (hooks stay above the early returns)
   const lessonLetters = useMemo(() => [...new Set(items.flatMap((x) => (x.kind === "check" ? [x.letter] : [])))], [items]);
 
-  useEffect(() => { lessonLetters.forEach((l) => getHowTo(l).catch(() => {})); }, [lessonLetters]); // warm the server cache; a first Gemini call takes 4-6 s
 
   const finishing = useRef(false);
   // A skipped step is passed without a match. The lesson can then be walked to the end, but it is NOT completed:

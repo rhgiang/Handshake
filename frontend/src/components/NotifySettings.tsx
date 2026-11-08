@@ -29,8 +29,8 @@ export function NotifySettings({ enabled }: Props) {
       setNotifyOn(true);
       setOn(true);
       setStatus(contactEmail
-        ? "Saved. Your contact must open the confirmation email and confirm before lesson updates can be sent. If no email arrives, try again later. You can stop notifications any time."
-        : "Saved. Weekly recaps are requested for your own email address. Delivery depends on the configured automation. You can stop notifications any time.");
+        ? "Saved. Each email recipient must confirm the relevant email link before receiving lesson updates or weekly recaps. If no email arrives, try again later. You can stop notifications any time."
+        : "Saved. Open the confirmation email and confirm your address before weekly practice recaps can be sent. You can stop notifications any time.");
     } catch {
       setStatus("Couldn't save. Check the emails and try again, or try again later.");
     } finally { setBusy(false); }
@@ -54,7 +54,7 @@ export function NotifySettings({ enabled }: Props) {
     <section aria-labelledby="notify-h">
       <h2 id="notify-h">Notifications</h2>
       <p>The person you are learning for must confirm their email before receiving lesson updates. They can unsubscribe from any update without opening the app.</p>
-      <p>Weekly recaps are for your own email address only. That address is not verified yet.</p>
+      <p>Weekly recaps are for your own email address. Confirm the email link before recaps can be sent.</p>
       <form onSubmit={save}>
         {enabled && <><label>
           Email of the person you're learning for (optional)

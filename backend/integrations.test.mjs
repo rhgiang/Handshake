@@ -25,7 +25,9 @@ test("configured database enables stats; failed connection falls back without di
   try {
     assert.deepEqual((await s.get("/api/features")).body, { stats: true, notify: false, agent: false });
     const id = randomUUID();
-    assert.deepEqual((await s.get(`/api/stats/${id}`)).body, { daily: [], items: [] });
+    const stats = await s.get(`/api/stats/${id}`);
+    assert.equal(stats.status, 503);
+    assert.deepEqual(stats.body, { error: "stats_unavailable" });
     assert.equal((await s.post("/api/attempts", { learnerId: id, attempts: [{ item: "L", correct: true }] })).status, 204);
     assert.equal((await s.post("/api/attempts", { learnerId: id, attempts: [{ item: "fs:LILY", correct: true }] })).status, 400);
   } finally { await s.close(); await integrations.db.close(); }

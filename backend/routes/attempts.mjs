@@ -36,8 +36,8 @@ export function register(app, { db, now = Date.now }) {
     try {
       res.json(await db.stats(req.params.learnerId));
     } catch {
-      console.error("Stats unavailable; returning empty results.");
-      res.json({ daily: [], items: [] });
+      console.error("Stats unavailable.");
+      res.status(503).json({ error: "stats_unavailable" });
     }
   });
 

@@ -43,7 +43,7 @@ export function StatsPage() {
       <PlanCard plan={plan} hasCandidates={!!planReq} failed={planFailed} />
       <section aria-labelledby="acc-h">
         <h2 id="acc-h">Matches the reference</h2>
-        {statsFailed && <p role="status">Stats could not be loaded. Your local progress is still saved.</p>}
+        {statsFailed && <p role="status">Cloud stats are temporarily unavailable. Your local progress is still saved.</p>}
         {features && !features.stats && <p>Cloud stats are not configured on this server.</p>}
         {statsFailed ? null : stats ? <AccuracyChart daily={stats.daily} /> : <p>Loading your stats…</p>}
         {stats && stats.items.length > 0 && (

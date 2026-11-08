@@ -1,3 +1,5 @@
+Latest verification: [2026-11-08 integration gap results](2026-11-08-integration-gaps.md). The historical preparation-only record below is superseded where that newer evidence provides live results.
+
 # Deployment evidence — 2026-11-07
 
 Architecture update: the frontend now deploys to Vercel and only the API to a Vultr VM (the database is Tiger Data Cloud); no GoDaddy/domain purchase is planned (see `docs/superpowers/plans/2026-11-07-vercel-vultr-architecture.md`). The text below is the earlier record and is not re-verified.

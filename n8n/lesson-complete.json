@@ -133,10 +133,10 @@
       "parameters": {
         "fromEmail": "={{ $vars.HANDSHAKE_FROM_EMAIL }}",
         "toEmail": "={{ $json.result.email }}",
-        "subject": "={{ $(\"Claim lesson\").item.json.result.title + \" — practice reminder\" }}",
+        "subject": "={{ $(\"Claim lesson\").item.json.result.title + \" — lesson completed\" }}",
         "emailFormat": "both",
-        "text": "={{ $(\"Claim lesson\").item.json.result.title + \" — practice reminder.\\n\\nSpell your name practice reminder placeholder.\\n\\nOpt out: \" + $vars.HANDSHAKE_LINK_ORIGIN + \"/webhook/handshake-unsubscribe?token=\" + encodeURIComponent($json.result.unsubscribeToken) }}",
-        "html": "={{ (() => { const title=$('Claim lesson').item.json.result.title; const stop=$vars.HANDSHAKE_LINK_ORIGIN+'/webhook/handshake-unsubscribe?token='+encodeURIComponent($json.result.unsubscribeToken); return \"<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width'><title>Handshake</title></head><body style='margin:0;padding:0;background:#f4f7f9;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;color:#0b1f33'><div style='display:none;max-height:0;overflow:hidden;opacity:0;color:transparent'>Practice reminder</div><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#f4f7f9;padding:40px 16px'><tr><td align='center'><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='max-width:560px;background:#ffffff;border:1px solid #d7e0e8;border-radius:16px;overflow:hidden'><tr><td style='height:4px;background:#0f766e;font-size:0;line-height:0'>&nbsp;</td></tr><tr><td style='padding:28px 32px 8px'><p style='margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#0f766e'>Handshake</p><p style='margin:10px 0 0;font-size:13px;color:#5b6b7c'>Practice</p><h1 style='margin:14px 0 0;font-size:28px;line-height:1.25;font-weight:650;letter-spacing:-0.02em;color:#0b1f33'>\" + String(title) + \"</h1>\" + \"<div style='margin:18px 0 0;font-size:16px;line-height:1.6;color:#0b1f33'>\" + \"<p style='margin:0'>Spell your name practice reminder placeholder.</p>\" + \"</div>\" + \"<hr style='border:none;border-top:1px solid #d7e0e8;margin:32px 0 18px'>\" + \"<p style='margin:0;font-size:13px;line-height:1.55;color:#5b6b7c'>You can opt out anytime.</p>\" + \"<p style='margin:14px 0 0;font-size:12px;line-height:1.5;color:#5b6b7c'><a href='\" + String(stop) + \"' style='color:#5b6b7c;text-decoration:underline'>Opt out of lesson updates</a></p>\" + \"</td></tr></table>\" + \"<p style='margin:18px 0 0;font-size:11px;line-height:1.4;color:#5b6b7c;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif'>Handshake · practice reminders</p>\" + \"</td></tr></table></body></html>\"; })() }}",
+        "text": "={{ $(\"Claim lesson\").item.json.result.title + \" — lesson completed.\\n\\nSomeone you support completed this ASL lesson on Handshake.\\n\\nOpt out: \" + $vars.HANDSHAKE_LINK_ORIGIN + \"/webhook/handshake-unsubscribe?token=\" + encodeURIComponent($json.result.unsubscribeToken) }}",
+        "html": "={{ (() => { const title=$('Claim lesson').item.json.result.title; const stop=$vars.HANDSHAKE_LINK_ORIGIN+'/webhook/handshake-unsubscribe?token='+encodeURIComponent($json.result.unsubscribeToken); return \"<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width'><title>Handshake</title></head><body style='margin:0;padding:0;background:#f4f7f9;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;color:#0b1f33'><div style='display:none;max-height:0;overflow:hidden;opacity:0;color:transparent'>An ASL lesson completed on Handshake.</div><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#f4f7f9;padding:40px 16px'><tr><td align='center'><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='max-width:560px;background:#ffffff;border:1px solid #d7e0e8;border-radius:16px;overflow:hidden'><tr><td style='height:4px;background:#0f766e;font-size:0;line-height:0'>&nbsp;</td></tr><tr><td style='padding:28px 32px 8px'><p style='margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#0f766e'>Handshake</p><p style='margin:10px 0 0;font-size:13px;color:#5b6b7c'>Lesson completed</p><h1 style='margin:14px 0 0;font-size:28px;line-height:1.25;font-weight:650;letter-spacing:-0.02em;color:#0b1f33'>\" + String(title) + \"</h1>\" + \"<div style='margin:18px 0 0;font-size:16px;line-height:1.6;color:#0b1f33'>\" + \"<p style='margin:0'>Someone you support completed this ASL lesson on Handshake. Thank you for being part of their learning journey.</p>\" + \"</div>\" + \"<hr style='border:none;border-top:1px solid #d7e0e8;margin:32px 0 18px'>\" + \"<p style='margin:0;font-size:13px;line-height:1.55;color:#5b6b7c'>You can opt out anytime.</p>\" + \"<p style='margin:14px 0 0;font-size:12px;line-height:1.5;color:#5b6b7c'><a href='\" + String(stop) + \"' style='color:#5b6b7c;text-decoration:underline'>Opt out of lesson updates</a></p>\" + \"</td></tr></table>\" + \"<p style='margin:18px 0 0;font-size:11px;line-height:1.4;color:#5b6b7c;font-family:Inter,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif'>Handshake · practice reminders</p>\" + \"</td></tr></table></body></html>\"; })() }}",
         "options": {
           "appendAttribution": false
         }
@@ -144,29 +144,12 @@
       "onError": "continueErrorOutput"
     },
     {
-      "id": "Skip-notify",
-      "name": "Skip notify",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        0,
-        240
-      ],
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "select handshake.lesson_finish($1,$2::uuid,false)",
-        "options": {
-          "queryReplacement": "={{ [$('Claim lesson').item.json.result.learnerId, $('Claim lesson').item.json.result.lease] }}"
-        }
-      }
-    },
-    {
       "id": "Lesson-sent",
       "name": "Lesson sent",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        240,
+        0,
         240
       ],
       "parameters": {
@@ -183,7 +166,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        480,
+        240,
         240
       ],
       "parameters": {
@@ -200,7 +183,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        720,
+        480,
         240
       ],
       "parameters": {
@@ -217,7 +200,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        960,
+        720,
         240
       ],
       "parameters": {
@@ -234,7 +217,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        1200,
+        960,
         240
       ],
       "parameters": {
@@ -302,22 +285,11 @@
       "main": [
         [
           {
-            "node": "Skip notify",
+            "node": "Send lesson",
             "type": "main",
             "index": 0
           }
         ],
-        [
-          {
-            "node": "Lesson response",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Skip notify": {
-      "main": [
         [
           {
             "node": "Lesson response",

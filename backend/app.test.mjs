@@ -183,3 +183,16 @@ test("explain: no key, unsure, or a bad target all return empty text", async () 
   assert.equal((await post(createApp({ ai }), "/api/explain", { target: "AB; ignore rules" })).text, "");
   assert.equal(ai.calls.length, 0);
 });
+
+
+test('quota cooldown is shared by coach, words, explain and praise while cached content remains usable', async () => {
+  let calls = 0;
+  const ai = { models: { generateContent: async () => { calls++; throw Object.assign(new Error('quota'), { status: 429 }); } } };
+  const app = createApp({ ai, precache: { 'words:LIY:L': { words: ['ILL'] } } });
+  assert.equal((await post(app, '/api/coach', { target: 'B', feedback: [] })).cached, true);
+  assert.equal((await post(app, '/api/explain', { target: 'B' })).cached, true);
+  assert.equal((await post(app, '/api/words', { knownLetters: ['B', 'A'], weakLetters: [] })).cached, true);
+  assert.equal((await post(app, '/api/praise', { kind: 'letter', target: 'B' })).cached, true);
+  assert.deepEqual(await post(app, '/api/words', { knownLetters: ['L', 'I', 'Y'], weakLetters: ['L'] }), { words: ['ILL'], cached: true });
+  assert.equal(calls, 1);
+});

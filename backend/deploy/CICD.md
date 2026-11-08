@@ -1,8 +1,6 @@
 # Automatic backend deployment
 
-Prepared configuration only. No keys, server access, GitHub settings, commits, pushes,
-or deployments have been created. Every setup/push/deployment command below is for
-an administrator to run **after explicit approval**.
+Live verification on 2026-11-08 found this workflow active and a successful production deployment of `4e0a991aeda5f8d8e740b74f8d482e23aff0fd0a`. The API service and public HTTPS check passed; a preceding test failure correctly skipped deployment. See [integration evidence](../../docs/evidence/2026-11-08-integration-gaps.md). The setup commands below describe administrator provisioning; they are not needed again on the existing VM. Repository administration permissions are still required to configure branch protection.
 
 ## Release policy and architecture
 

@@ -63,8 +63,12 @@ three anonymous test rows under a fresh UUID and leaves them as test evidence.
 Daily buckets are UTC, ordered oldest first, for attempts within the rolling
 last 14 days. Empty days are omitted. Items require at least three attempts,
 ordered by lowest match fraction, then most attempts, with a five-item limit.
-Fractions are 0–1. No database or a database failure returns
-`{ "daily": [], "items": [] }`; invalid UUID returns 400. Limit: 60/minute/IP.
+Fractions are 0–1. An unconfigured database or a successful query with no history
+returns `200 { "daily": [], "items": [] }`. A configured database query failure
+returns `503 { "error": "stats_unavailable" }`; the stats page shows an outage
+message rather than the empty-history prompt. Invalid UUID returns 400.
+Limit: 60/minute/IP. Attempt ingestion remains best effort and does not block
+local practice during an outage.
 
 ## Frontend handoff and privacy
 

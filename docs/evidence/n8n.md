@@ -1,6 +1,8 @@
+Latest verification: [2026-11-08 integration gap results](2026-11-08-integration-gaps.md). Updated workflows are active; real SMTP/inbox proof remains pending. The older record below is historical.
+
 # n8n live verification
 
-Status: NOT TESTED against a live n8n instance or real SMTP inbox. Workflow exports and automated local tests are separate from delivery evidence.
+Current status: updated workflows are active and passed live n8n runtime checks with a controlled email sink. Real SMTP acceptance/inbox delivery is still pending. See the linked integration results for passed checks; the remaining list below is the original delivery-evidence checklist.
 
 Required inputs: n8n HTTPS editor/webhook origin and access, SMTP credential configured in n8n, dedicated subscription database access, final public APP_URL, and consenting operator-controlled learner/contact inboxes. Provide credentials through a secret manager or protected local file; never commit them.
 
