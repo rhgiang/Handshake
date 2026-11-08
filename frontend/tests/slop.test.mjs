@@ -6,8 +6,15 @@ import { fileURLToPath } from "node:url";
 
 const SRC = fileURLToPath(new URL("../src/", import.meta.url));
 const walk = (d) => readdirSync(d).flatMap((n) => (statSync(join(d, n)).isDirectory() ? walk(join(d, n)) : [join(d, n)]));
-const EXEMPT = new Set(["components/journal/journal.css"]); // hand-drawn notebook: ruled lines, hatching, irregular radii on purpose
-const OK = /(gradient|infinite|glass)-ok/;
+const EXEMPT = new Set([
+  "components/journal/journal.css", // hand-drawn notebook: ruled lines, hatching, irregular radii on purpose
+  // Restored "A Silent Voice" Home hero, level deck, reveal cards and Levels hero: the sky/sakura washes, the tile bob and
+  // the card lifts are the point of these areas. Every animation there stops under prefers-reduced-motion and data-reduce-motion.
+  "components/landing/landing.css",
+  "components/landing/path-hero.css",
+]);
+// silent-voice-ok marks single restored hero / level-look lines in styles.css (same reason as the landing files above).
+const OK = /(gradient|infinite|glass|silent-voice)-ok/;
 
 // Comments are blanked (same length, newlines kept) so offsets and line numbers stay valid.
 // A line that carries an opt-out marker in a comment is flagged in `okLines`.
@@ -17,7 +24,7 @@ const files = walk(SRC)
   .map((p) => {
     const raw = readFileSync(p, "utf8");
     const rawLines = raw.split("\n");
-    return { file: p.slice(SRC.length), raw, text: blank(raw), okLines: rawLines.map((l) => OK.test(l)) };
+    return { file: p.slice(SRC.length).replace(/\\/g, "/"), raw, text: blank(raw), okLines: rawLines.map((l) => OK.test(l)) };
   });
 
 const lineOf = (text, idx) => text.slice(0, idx).split("\n").length;
@@ -58,7 +65,7 @@ function hueOf(c) {
 }
 const COLOUR = /#[0-9a-f]{8}\b|#[0-9a-f]{6}\b|#[0-9a-f]{3,4}\b|rgba?\([^)]*\)|hsla?\([^)]*\)/gi;
 
-test("no gradients (flat surfaces)", () => assert.deepEqual(find(/(linear|radial|conic)-gradient\(/), []));
+test("no gradients (flat surfaces, outside the restored hero / level look)", () => assert.deepEqual(find(/(linear|radial|conic)-gradient\(/), []));
 // The owner-chosen palette (indigo/periwinkle/lavender, #3D52A0 #7091E6 #8697C4 #ADBBDA #EDE8F5) sits at hue 220-265, so only
 // true purple/magenta (272-320) is banned. The AI-look tell is purple gradients, which the "no gradients" test bans.
 test("no purple/magenta colours (hue 272-320; the palette itself is hue 220-265)", () => {

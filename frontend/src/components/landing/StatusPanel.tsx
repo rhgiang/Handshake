@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { CountUp } from "../motion/CountUp";
 import { useReduceMotion } from "../motion/MotionProvider";
-import { springs } from "../motion/tokens";
 import { RevealCard } from "./RevealCard";
 import "./landing.css";
 
@@ -39,7 +38,7 @@ export function StatusPanel(props: {
   const next = timeline.find((l) => l.state === "current") ?? null;
   const nextIndex = next ? timeline.indexOf(next) : total;
   const fill = total > 1 ? Math.min(1, Math.max(0, (done === total ? total - 1 : Math.max(done, nextIndex)) / (total - 1))) : 0;
-  const spring = reduce ? { duration: 0 } : springs.layout;
+  const spring = reduce ? { duration: 0 } : { type: "spring" as const, stiffness: 55, damping: 18 };
 
   return (
     <RevealCard className="lp-duo-col" title="Progress" summary={`${pct}% done · ${done} of ${total} lessons`}>
@@ -64,7 +63,7 @@ export function StatusPanel(props: {
                         strokeDasharray={C}
                         initial={{ strokeDashoffset: reduce ? C * (1 - p) : C }}
                         animate={{ strokeDashoffset: C * (1 - p) }}
-                        transition={reduce ? { duration: 0 } : { ...springs.layout, delay: 0.15 + i * 0.12 }}
+                        transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 50, damping: 17, delay: 0.15 + i * 0.12 }}
                         transform="rotate(-90 100 100)"
                       />
                     )}

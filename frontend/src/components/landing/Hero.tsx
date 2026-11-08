@@ -2,7 +2,6 @@ import { useState } from "react";
 import { MotionConfig, motion } from "motion/react";
 import { MARK_LABEL, StatusMark, type MarkState } from "../StatusMark";
 import { useMotionSource, useReduceMotion } from "../motion/MotionProvider";
-import { enter } from "../motion/tokens";
 import "./landing.css";
 
 export type HeroLetter = { letter: string; status: MarkState };
@@ -10,8 +9,8 @@ export type HeroLetter = { letter: string; status: MarkState };
 /**
  * Top of Home: the big title, the slogan, one message and the two actions.
  * The memorable part is the row of tiles that spells the name of the person you are learning for.
- * Tiles spring in once on load (the page's one orchestrated moment); the headline, slogan and actions then
- * enter in that order (enter(1..3)), once. Nothing idles or bobs. Under reduced motion the copy only fades and the tiles show at once. Each tile carries its status as a shape plus a hidden text label.
+ * Tiles spring in once on load (the page's one orchestrated moment), then idle with a very slow bob.
+ * Both stop under reduced motion. Each tile carries its status as a shape plus a hidden text label.
  *
  * Props
  * - letters: the letters of that name with their status.
@@ -20,7 +19,7 @@ export type HeroLetter = { letter: string; status: MarkState };
  */
 /**
  * One letter tile. The entrance is a delayed spring; once it has landed, the tile is "ready" and answers the pointer:
- * moving over it (or dragging across the row) lifts it, and moving off drops it back
+ * moving over it (or dragging across the row) lifts it and it floats (CSS bob, faster), and moving off drops it back
  * with a bouncy spring. Tabbing does nothing here because the tiles are decoration, not controls.
  */
 function Tile({ letter: l, index: i, low, reduce, off }: { letter: HeroLetter; index: number; low: boolean; reduce: boolean; off: boolean }) {
@@ -57,17 +56,16 @@ export function Hero(props: { letters: HeroLetter[]; cta: { label: string; onCli
   const { userChoice } = useMotionSource();
   return (
     <section className="lp-hero" aria-labelledby="lp-title">
+      <div className="lp-aura" aria-hidden="true" />
       <div className="lp-hero-copy">
-        <motion.h1 id="lp-title" className="lp-title" {...enter(1, reduce)}>
+        <h1 id="lp-title" className="lp-title">
           <span>Say hello</span> <span>in Sign.</span>
-        </motion.h1>
-        <motion.p className="lp-slogan" {...enter(2, reduce)}>
-          Sign it for someone.
-        </motion.p>
+        </h1>
+        <p className="lp-slogan">Sign it for someone.</p>
         <p className="lp-message">
           Handshake teaches ASL around the one person you want to talk to. Your camera checks your hands as you sign, and a coach helps with whatever trips you up.
         </p>
-        <motion.div className="lp-actions" {...enter(3, reduce)}>
+        <div className="lp-actions">
           {cta && (
             <button type="button" className="lp-cta" onClick={cta.onClick}>
               {cta.label}
@@ -76,7 +74,7 @@ export function Hero(props: { letters: HeroLetter[]; cta: { label: string; onCli
           <button type="button" className="lp-ghost" onClick={onSeeLevels}>
             See all levels
           </button>
-        </motion.div>
+        </div>
       </div>
 
       <MotionConfig reducedMotion="never">

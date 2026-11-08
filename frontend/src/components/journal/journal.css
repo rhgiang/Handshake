@@ -1,13 +1,13 @@
 /* Progress journal (notebook look). All classes are prefixed jr-. */
 .jr-spread {
-  --jr-paper: #FAF8FD;
-  --jr-ink: #1F2A5C;
-  --jr-rule: rgba(61, 82, 160, 0.2);
+  --jr-paper: #fbf8f0;
+  --jr-ink: #2a4a66;
+  --jr-rule: rgba(58, 106, 143, 0.2);
   --jr-hand: var(--font, system-ui, sans-serif); /* the journal uses the app font (Atkinson Hyperlegible Next) so the whole site has one typeface */
   position: relative; display: grid; grid-template-columns: 1fr 1fr;
   max-width: 920px; margin: 0 auto 40px; border-radius: 10px;
-  box-shadow: 0 18px 0 #8697C4, 0 30px 40px rgba(31, 42, 92, 0.28);
-  color: var(--text, #1F2A5C);
+  box-shadow: 0 18px 0 #cfc6b0, 0 30px 40px rgba(30, 50, 70, 0.28);
+  color: var(--text, #1e2a36);
   animation: jr-fade-up 420ms ease-out both;
 }
 .jr-page {
@@ -17,14 +17,14 @@
   background-position: 0 14px; overflow: hidden;
   font-family: var(--jr-hand); font-size: 17px; line-height: 36px; color: var(--jr-ink);
 }
-.jr-page-left { padding-left: 50px; border-radius: 10px 0 0 10px; box-shadow: inset -26px 0 30px -20px rgba(31, 42, 92, 0.28); }
-.jr-page-right { border-radius: 0 10px 10px 0; box-shadow: inset 26px 0 30px -20px rgba(31, 42, 92, 0.28); }
-.jr-holes { position: absolute; left: 14px; top: 20px; bottom: 20px; width: 12px; background: radial-gradient(circle, #8697C4 0 3.5px, transparent 4.5px) 0 0 / 12px 34px repeat-y; }
-.jr-ribbon { position: absolute; top: -6px; right: 44px; width: 22px; height: 96px; background: #7091E6; clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%); }
-.jr-label { font: 13px/1.4 var(--font, sans-serif); letter-spacing: 0.05em; color: var(--muted, #38437A); text-transform: uppercase; }
+.jr-page-left { padding-left: 50px; border-radius: 10px 0 0 10px; box-shadow: inset -26px 0 30px -20px rgba(80, 60, 30, 0.28); }
+.jr-page-right { border-radius: 0 10px 10px 0; box-shadow: inset 26px 0 30px -20px rgba(80, 60, 30, 0.28); }
+.jr-holes { position: absolute; left: 14px; top: 20px; bottom: 20px; width: 12px; background: radial-gradient(circle, #8a96a3 0 3.5px, transparent 4.5px) 0 0 / 12px 34px repeat-y; }
+.jr-ribbon { position: absolute; top: -6px; right: 44px; width: 22px; height: 96px; background: #b9456b; clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%); }
+.jr-label { font: 13px/1.4 var(--font, sans-serif); letter-spacing: 0.05em; color: var(--muted, #56636f); text-transform: uppercase; }
 .jr-title { margin: 0 0 8px; font: 700 30px/1.2 var(--jr-hand); color: var(--jr-ink); }
 .jr-body { position: relative; z-index: 1; }
-.jr-num { position: absolute; bottom: 10px; font: 13px var(--font, sans-serif); color: var(--muted, #38437A); }
+.jr-num { position: absolute; bottom: 10px; font: 13px var(--font, sans-serif); color: var(--muted, #56636f); }
 .jr-page-left .jr-num { left: 50px; }
 .jr-page-right .jr-num { right: 34px; }
 
@@ -35,7 +35,7 @@
 
 .jr-row { display: flex; align-items: center; gap: 8px; line-height: 36px; }
 .jr-row-label { flex: none; width: 5.5em; }
-.jr-row-text { font-family: var(--font, sans-serif); font-size: 15px; white-space: nowrap; color: var(--text, #1F2A5C); }
+.jr-row-text { font-family: var(--font, sans-serif); font-size: 15px; white-space: nowrap; color: var(--text, #1e2a36); }
 .jr-bar { flex: 1; height: 14px; border: 2px solid var(--jr-ink); border-radius: 4px 8px 6px 3px; background: rgba(255, 255, 255, 0.55); overflow: hidden; }
 .jr-bar i { display: block; height: 100%; background: repeating-linear-gradient(135deg, #6ebe96 0 5px, #8fd0ae 5px 10px); transform-origin: left; animation: jr-fill 600ms ease-out both; }
 .jr-bar i.jr-warn { background: repeating-linear-gradient(135deg, #d9a46a 0 5px, #e6bf8f 5px 10px); }
@@ -50,17 +50,17 @@
 .jr-next { margin-top: 24px; }
 .jr-stack { display: grid; gap: 14px; }
 .jr-stack-wide { gap: 24px; }
-.jr-note { margin-top: 24px; font-size: 16px; color: var(--muted, #38437A); }
+.jr-note { margin-top: 24px; font-size: 16px; color: var(--muted, #56636f); }
 .jr-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 12px; padding: 0; list-style: none; }
 .jr-chips .alpha-box { width: 52px; }
 .jr-boxes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 8px 0; padding: 0; list-style: none; }
 .jr-box { display: flex; flex-direction: column; align-items: center; gap: 6px; line-height: 1.2; text-align: center; }
-.jr-box-count { font: 14px/1.2 var(--font, sans-serif); color: var(--text, #1F2A5C); min-height: 34px; }
+.jr-box-count { font: 14px/1.2 var(--font, sans-serif); color: var(--text, #1e2a36); min-height: 34px; }
 .jr-box-bar { display: flex; align-items: flex-end; width: 100%; max-width: 54px; height: 140px; border: 2px solid var(--jr-ink); border-radius: 4px 8px 6px 3px; background: rgba(255, 255, 255, 0.55); overflow: hidden; }
 .jr-box-bar i { display: block; width: 100%; background: repeating-linear-gradient(135deg, #6ebe96 0 5px, #8fd0ae 5px 10px); }
 
 .jr-table-wrap { overflow-x: auto; }
-.jr-table { width: 100%; border-collapse: collapse; font: 15px/1.3 var(--font, sans-serif); color: #1F2A5C; }
+.jr-table { width: 100%; border-collapse: collapse; font: 15px/1.3 var(--font, sans-serif); color: #1e2a36; }
 .jr-table th, .jr-table td { padding: 4px 6px; text-align: left; border-bottom: 1px solid var(--jr-rule); line-height: 24px; }
 .jr-table thead th { font-weight: 700; font-size: 14px; border-bottom: 2px solid var(--jr-ink); }
 .jr-table tbody th { font: 700 16px/24px var(--jr-hand); color: var(--jr-ink); }
@@ -76,8 +76,8 @@
   .jr-page-right .jr-num { right: 18px; }
   .jr-holes { left: 10px; }
   .jr-boxes { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; overflow-wrap: anywhere; }
-  .jr-page-left { border-radius: 10px 10px 0 0; box-shadow: inset 0 -20px 24px -20px rgba(31, 42, 92, 0.28); }
-  .jr-page-right { border-radius: 0 0 10px 10px; box-shadow: inset 0 20px 24px -20px rgba(31, 42, 92, 0.28); }
+  .jr-page-left { border-radius: 10px 10px 0 0; box-shadow: inset 0 -20px 24px -20px rgba(80, 60, 30, 0.28); }
+  .jr-page-right { border-radius: 0 0 10px 10px; box-shadow: inset 0 20px 24px -20px rgba(80, 60, 30, 0.28); }
 }
 @media (prefers-reduced-motion: reduce) {
   .jr-spread, .jr-bar i { animation: none; }

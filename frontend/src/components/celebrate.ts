@@ -3,8 +3,8 @@
 // - The sound is never the only cue: callers also show text (see <StatusMessage>).
 // - No libraries, no network. Confetti pieces remove themselves.
 
-// The five palette colours (indigo, periwinkle, slate periwinkle, pale blue-lilac, lavender white).
-const COLOURS = ["#3D52A0", "#7091E6", "#8697C4", "#ADBBDA", "#EDE8F5"];
+// Sakura petals with a little sky (pink, blush, white, pale blue).
+const COLOURS = ["#f2b8ca", "#e58aa8", "#fde4ec", "#ffffff", "#b9d6ea"];
 
 function reducedMotion() {
   // OS setting OR the in-app "Reduce motion" switch (data-reduce-motion on <html>).
