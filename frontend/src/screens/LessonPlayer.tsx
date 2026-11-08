@@ -15,6 +15,7 @@ import { AnimatedProgress } from "../components/motion/AnimatedProgress";
 import { createCoachQueue } from "../lib/coachQueue";
 import type { FingerFeedback } from "../cv/types";
 import { loadTemplates } from "../cv/classifier";
+import { CONFUSABLE } from "../cv/recognizer";
 import { celebrate } from "../components/celebrate";
 import { LessonNotice } from "../components/LessonNotice";
 import { clearRedo, loadRedo, saveRedo } from "./lessonRedo";
@@ -377,6 +378,9 @@ function LetterItem({ index, item, lessonLetters, leftHanded, stepLabel, lessonP
   const noLiveCheck = item.kind === "learn" && item.referenceOnly;
   const moving = target === "J" || target === "Z"; // these are drawn in the air, so a still camera frame can never check them
   const recall = item.kind === "check" && !item.showReference && !sideBySide; // reference hidden on purpose
+  // Live "you are being read as a look-alike" cue (A reads as S, etc.). Only for known look-alikes, so the text changes rarely. Never changes the pass check.
+  const seen = check.prediction?.letter;
+  const lookAlike = item.kind === "check" && seen && seen !== target && (CONFUSABLE[target] ?? []).includes(seen) && !(recall && hintStage === 0) ? seen : null;
   const camera = noLiveCheck ? (
     <div className="card">
       {moving ? (
@@ -392,6 +396,7 @@ function LetterItem({ index, item, lessonLetters, leftHanded, stepLabel, lessonP
     <>
       <Camera {...check.cam} progress={shownProgress} />
       {check.hint && <p role="status">{check.hint}</p>}
+      {lookAlike && <p role="status">Reads as {lookAlike} right now, not {target}. Compare your thumb and fingers with the reference.</p>}
       {recall && hintStage === 1 && <p role="status">Hint: {howTo?.text ?? (howToLoading ? "loading…" : "no written hint is available for this letter, try Show answer.")}</p>}
       {recall && (
         <button type="button" className={check.missCount >= 2 && hintStage === 0 ? "cta" : "secondary"} onClick={() => setHintStage((hintStage + 1) % 3)}>
