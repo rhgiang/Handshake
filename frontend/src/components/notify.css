@@ -1,0 +1,16 @@
+.notify-status { display: flex; gap: var(--space-3); align-items: flex-start; margin: var(--space-4) 0; padding: var(--space-3) var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--reference-bg); color: var(--text); animation: notify-fade 150ms var(--ease-out) both; }
+.notify-status > svg { flex: none; margin-top: 2px; color: var(--reference); }
+.notify-status-body { min-width: 0; }
+.notify-status p { margin: 0; overflow-wrap: anywhere; }
+.notify-status-label { font-weight: 700; }
+.notify-status-detail { margin-top: var(--space-1); color: var(--text); }
+.notify-refresh { margin-top: var(--space-2); }
+.notify-waiting { background: var(--notyet-bg); }
+.notify-waiting > svg, .notify-waiting .notify-status-label { color: var(--notyet); }
+.notify-ok { background: var(--match-bg); }
+.notify-ok > svg, .notify-ok .notify-status-label { color: var(--match); }
+.notify-stopped > svg, .notify-none > svg, .notify-unknown > svg, .notify-stopped .notify-status-label, .notify-none .notify-status-label, .notify-unknown .notify-status-label { color: var(--reference); }
+.notify-error { margin: var(--space-3) 0; color: var(--notyet); font-weight: 600; }
+@keyframes notify-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .notify-status { animation: none; } }
+[data-reduce-motion] .notify-status { animation: none; }

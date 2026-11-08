@@ -187,3 +187,36 @@ test("settings: Change/Open keep one accessible name; the slide copy is aria-hid
       assert.match(a[1], new RegExp(`<span>${text}</span><span aria-hidden="true">${text}</span>`));
     }
   }));
+
+test("NotifyStatus: label, polite status region, aria-hidden shape, Check again only for waiting/unknown", () =>
+  withApp(async (load, render, h) => {
+    const { NotifyStatus } = await load("/src/components/NotifyStatus.tsx");
+    const cases = [["none", "Not set up", false], ["waiting", "Awaiting confirmation", true], ["ok", "Confirmed", false], ["stopped", "Stopped", false], ["unknown", "Status unavailable", true]];
+    for (const [tone, label, refresh] of cases) {
+      const html = render(h(NotifyStatus, { view: { label, tone, detail: ["Some detail."] }, onRefresh: () => {} }));
+      assert.match(html, /role="status"/, tone);
+      assert.match(html, /aria-live="polite"/, tone);
+      assert.match(html, new RegExp(`>${label}<`), tone);
+      assert.match(html, /<svg[^>]*aria-hidden="true"/, tone);
+      assert.match(html, /Some detail\./);
+      assert.equal(html.includes("Check again"), refresh, tone);
+    }
+    const busy = render(h(NotifyStatus, { view: { label: "Awaiting confirmation", tone: "waiting", detail: [] }, refreshing: true, onRefresh: () => {} }));
+    assert.match(busy, /disabled=""[^>]*>Checking\.\.\.</);
+  }));
+
+test("NotifySettings: loading, disabled and enabled render without claiming a confirmation", () =>
+  withApp(async (load, render, h) => {
+    const { NotifySettings } = await load("/src/components/NotifySettings.tsx");
+    assert.match(render(h(NotifySettings, {})), /Loading/);
+    const off = render(h(NotifySettings, { enabled: false }));
+    assert.match(off, /Notifications aren&#x27;t set up on this server\./);
+    assert.ok(!off.includes("Stop notifications"));
+    for (const statusEnabled of [false, true]) {
+      const html = render(h(NotifySettings, { enabled: true, statusEnabled }));
+      assert.match(html, /<form/);
+      assert.match(html, /Stop notifications/);
+      assert.ok(!html.includes("Confirmed"));
+      assert.ok(!html.includes("!"));
+    }
+  }));

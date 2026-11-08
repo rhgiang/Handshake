@@ -8,7 +8,7 @@ import { registerIntegrations } from "./integrations.mjs";
 test("unconfigured database leaves Gemini and stats endpoints usable", async () => {
   const s = await serve((app) => { registerIntegrations(app, {}); app.use(createApp()); });
   try {
-    assert.deepEqual((await s.get("/api/features")).body, { stats: false, notify: false, agent: false });
+    assert.deepEqual((await s.get("/api/features")).body, { stats: false, notify: false, notifyStatus: false, agent: false });
     const id = randomUUID();
     assert.equal((await s.post("/api/attempts", { learnerId: id, attempts: [{ item: "L", correct: true }] })).status, 204);
     assert.deepEqual((await s.get(`/api/stats/${id}`)).body, { daily: [], items: [] });
@@ -17,13 +17,23 @@ test("unconfigured database leaves Gemini and stats endpoints usable", async () 
   } finally { await s.close(); }
 });
 
+test("N8N_STATUS_URL is optional and only toggles notifyStatus", async () => {
+  const base = { N8N_SUBSCRIBE_URL: "https://n/s", N8N_EVENT_URL: "https://n/e", N8N_SECRET: "x" };
+  for (const [env, want] of [[base, false], [{ ...base, N8N_STATUS_URL: "https://n/st" }, true]]) {
+    const s = await serve((app) => registerIntegrations(app, env));
+    try {
+      assert.deepEqual((await s.get("/api/features")).body, { stats: false, notify: true, notifyStatus: want, agent: false });
+    } finally { await s.close(); }
+  }
+});
+
 test("configured database enables stats; failed connection falls back without disabling practice", async () => {
   let integrations;
   const s = await serve((app) => {
     integrations = registerIntegrations(app, { DATABASE_URL: "postgres://unused:unused@127.0.0.1:1/db" });
   });
   try {
-    assert.deepEqual((await s.get("/api/features")).body, { stats: true, notify: false, agent: false });
+    assert.deepEqual((await s.get("/api/features")).body, { stats: true, notify: false, notifyStatus: false, agent: false });
     const id = randomUUID();
     const stats = await s.get(`/api/stats/${id}`);
     assert.equal(stats.status, 503);

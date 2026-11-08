@@ -1,5 +1,6 @@
 import { apiUrl } from "./apiBase";
 import type { FingerFeedback } from "../cv";
+import type { NotifyReason, NotifyState } from "./notifyMessages";
 import { requestPraise, type PraiseKind } from "./praise";
 
 // Frontend → backend. Keep these shapes in sync with CLAUDE.md and backend/index.mjs.
@@ -41,7 +42,8 @@ async function get<T>(url: string): Promise<T> {
   return res.json();
 }
 
-export type Features = { stats: boolean; notify: boolean; agent: boolean };
+export type { NotifyReason, NotifyState };
+export type Features = { stats: boolean; notify: boolean; notifyStatus?: boolean; agent: boolean };
 export type Stats = {
   daily: { day: string; attempts: number; accuracy: number }[];
   items: { item: string; attempts: number; accuracy: number }[];
@@ -55,4 +57,16 @@ export const planToday = (req: import("./planInput").PlanRequest) => post<Plan>(
 export type SubscribeBody =
   | { action: "subscribe"; learnerId: string; consent: true; userName?: string; theirName?: string; learnerEmail?: string; contactEmail?: string }
   | { action: "unsubscribe"; learnerId: string };
-export const subscribe = (body: SubscribeBody) => post<{ ok: boolean; reason?: string }>("/api/subscribe", body);
+export const subscribe = (body: SubscribeBody) => post<{ ok: boolean; reason?: NotifyReason }>("/api/subscribe", body);
+
+/** One request per call, never polled. A network failure or non-JSON answer resolves to automation_unavailable. */
+export async function notifyStatus(learnerId: string): Promise<({ ok: true } & NotifyState) | { ok: false; reason: NotifyReason }> {
+  try {
+    const res = await fetch(apiUrl(`/api/notify-status?learnerId=${encodeURIComponent(learnerId)}`), { signal: AbortSignal.timeout(10000) });
+    const j = await res.json();
+    if (j && j.ok === true) return j;
+    return { ok: false, reason: j?.reason ?? "automation_unavailable" };
+  } catch {
+    return { ok: false, reason: "automation_unavailable" };
+  }
+}

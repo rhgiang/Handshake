@@ -3,11 +3,26 @@ import { rateLimit } from "../limit.mjs";
 import { UUID_RE, LESSON_RE, NAME_RE, isEmail } from "../validate.mjs";
 
 const bad = (res) => res.status(400).json({ error: "bad_request" });
+const STATUS = {
+  contact: ["none", "awaiting_confirmation", "confirmed", "stopped"],
+  recap: ["none", "requested", "stopped"],
+  delivery: ["ok", "pending"],
+};
 const limit = () => rateLimit({ windowMs: 60_000, max: 10 });
 
 // Names and emails leave the server only here, only for n8n, only with consent (the client form requires the checkbox).
-export function register(app, { n8n, fetch: f = fetch }) {
-  async function forward(url, body) {
+export function register(app, { n8n, fetch: f = fetch, statusGlobalMax = 60 }) {
+  // One shared bucket for every caller: n8n Cloud bills an execution per status call.
+  const globalStatusLimit = rateLimit({ windowMs: 60_000, max: statusGlobalMax, key: () => "notify-status" });
+  // Upstream HTTP status -> stable client-facing reason. Upstream bodies are never forwarded.
+  // Caveat: a 500 can also be a generic workflow error rather than an SMTP failure, and 429/503 are only
+  // trustworthy when they come from our own workflow (a proxy or n8n platform limit could send them too).
+  const REASONS = { 429: "confirmation_limit", 503: "delivery_pending", 409: "stale_request", 400: "bad_request", 422: "bad_request", 500: "delivery_failed" };
+  const fail = (reason) => {
+    console.error(`n8n forwarding failed: ${reason}`);
+    return { ok: false, reason };
+  };
+  async function call(url, body) {
     try {
       const r = await f(url, {
         method: "POST",
@@ -15,12 +30,36 @@ export function register(app, { n8n, fetch: f = fetch }) {
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(5000),
       });
-      return r.ok ? { ok: true } : { ok: false, reason: "upstream" };
-    } catch (e) {
-      console.error("n8n forwarding unavailable.");
-      return { ok: false, reason: "upstream" };
+      return r.ok ? { r } : { err: fail(REASONS[r.status] ?? "automation_unavailable") };
+    } catch {
+      return { err: fail("automation_unavailable") };
     }
   }
+  async function forward(url, body) {
+    const { err } = await call(url, body);
+    return err ?? { ok: true };
+  }
+
+  app.get("/api/notify-status", limit(), globalStatusLimit, async (req, res) => {
+    res.set("Cache-Control", "no-store");
+    const learnerId = req.query.learnerId;
+    if (typeof learnerId !== "string" || !UUID_RE.test(learnerId)) return bad(res);
+    if (!n8n) return res.json({ ok: false, reason: "disabled" });
+    if (!n8n.statusUrl) return res.json({ ok: false, reason: "status_unavailable" });
+    const { r, err } = await call(n8n.statusUrl, { learnerId });
+    if (err) return res.json(err);
+    let u;
+    try {
+      u = await r.json();
+    } catch {
+      return res.json(fail("automation_unavailable"));
+    }
+    const valid =
+      u && u.ok === true && STATUS.contact.includes(u.contact) && STATUS.recap.includes(u.recap) &&
+      typeof u.expired === "boolean" && STATUS.delivery.includes(u.delivery);
+    if (!valid) return res.json(fail("automation_unavailable"));
+    res.json({ ok: true, contact: u.contact, recap: u.recap, expired: u.expired, delivery: u.delivery });
+  });
 
   app.post("/api/subscribe", limit(), express.json({ limit: "16kb" }), async (req, res) => {
     const b = req.body ?? {};

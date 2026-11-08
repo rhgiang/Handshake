@@ -14,11 +14,11 @@ export function registerIntegrations(app, env = process.env) {
   }
   registerAttempts(app, { db });
   const n8n = env.N8N_SUBSCRIBE_URL && env.N8N_EVENT_URL && env.N8N_SECRET
-    ? { subscribeUrl: env.N8N_SUBSCRIBE_URL, eventUrl: env.N8N_EVENT_URL, secret: env.N8N_SECRET } : null;
+    ? { subscribeUrl: env.N8N_SUBSCRIBE_URL, eventUrl: env.N8N_EVENT_URL, statusUrl: env.N8N_STATUS_URL, secret: env.N8N_SECRET } : null;
   const agent = env.MARITIME_AGENT_URL && env.MARITIME_AGENT_TOKEN
     ? { url: env.MARITIME_AGENT_URL, token: env.MARITIME_AGENT_TOKEN } : null;
   registerNotify(app, { n8n });
   registerPlan(app, { agent });
-  app.get("/api/features", (_req, res) => res.json({ stats: !!db, notify: !!n8n, agent: !!agent }));
+  app.get("/api/features", (_req, res) => res.json({ stats: !!db, notify: !!n8n, notifyStatus: !!(n8n && n8n.statusUrl), agent: !!agent }));
   return { db };
 }

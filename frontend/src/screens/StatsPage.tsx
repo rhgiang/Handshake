@@ -57,7 +57,7 @@ export function StatsPage() {
           </>
         )}
       </section>
-      <NotifySettings enabled={features ? features.notify : undefined} />
+      <NotifySettings enabled={features ? features.notify : undefined} statusEnabled={features?.notifyStatus} />
     </div>
   );
 }

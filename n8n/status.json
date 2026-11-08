@@ -1,0 +1,68 @@
+{
+  "name": "Handshake v1 - status",
+  "nodes": [
+    {
+      "id": "status",
+      "name": "Status",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "parameters": {
+        "path": "handshake-status",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "authentication": "headerAuth",
+        "options": {}
+      }
+    },
+    {
+      "id": "read-status",
+      "name": "Read status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [220, 0],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT handshake.notification_status($1::text) AS result",
+        "options": {
+          "queryReplacement": "={{ [typeof $json.body?.learnerId === 'string' && $json.body.learnerId.length <= 100 ? $json.body.learnerId : ''] }}"
+        }
+      }
+    },
+    {
+      "id": "status-result",
+      "name": "Status result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [440, 0],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {ok:true, ...$json.result} }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Cache-Control", "value": "no-store" },
+              { "name": "Referrer-Policy", "value": "no-referrer" }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Status": { "main": [[{ "node": "Read status", "type": "main", "index": 0 }]] },
+    "Read status": { "main": [[{ "node": "Status result", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "none",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false,
+    "executionTimeout": 30
+  },
+  "active": false,
+  "pinData": {},
+  "tags": []
+}
