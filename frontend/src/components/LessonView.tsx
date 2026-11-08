@@ -43,6 +43,8 @@ function kindOf(status: string, feedback?: "match" | "miss"): StatusKind {
   return "info";
 }
 
+import { LessonExit } from "./LessonExit";
+
 export function LessonView(p: LessonViewProps) {
   const primary = p.onRetry || p.actionDisabled !== undefined || (!p.onSelfCheck && p.actionLabel === "Continue");
   return (
@@ -50,7 +52,7 @@ export function LessonView(p: LessonViewProps) {
       {p.lessonProgress !== undefined && (
         <progress className="lesson-progress" value={p.lessonProgress} max={1} aria-label={p.stepLabel} />
       )}
-      <a className="lesson-exit" href="#/path">Back to your path</a>
+      <LessonExit />
       <header className="lesson-head">
         <p className="eyebrow">{p.stepLabel}</p>
         <h1>{p.title}</h1>

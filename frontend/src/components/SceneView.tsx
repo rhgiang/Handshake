@@ -26,11 +26,13 @@ const chipLabel = (token: string) => (token.startsWith("fs:") ? `spell ${token.s
  * Finished turns stay above as chat bubbles. Presentational only; LessonPlayer + TokenRunner drive it.
  * Meaning is never colour alone: chips say "done" / "now" in text, and the prompt is an aria-live region.
  */
+import { LessonExit } from "./LessonExit";
+
 export function SceneView(p: SceneViewProps) {
   const t = p.turns[p.turnIndex];
   return (
     <div className="page scene">
-      <a className="lesson-exit" href="#/path">Back to your path</a>
+      <LessonExit />
       <header className="lesson-head">
         <div>
           <p className="eyebrow">
