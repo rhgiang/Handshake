@@ -139,3 +139,51 @@ test("settings: tiles are one labelled image; a name with no A-Z letters shows a
     assert.match(html, /李明/);
     assert.match(html, /You/);
   }));
+
+test("settings: name tiles render the real letters in the initial markup (flip is client-only)", () =>
+  withApp(async (load, render, h) => {
+    const { Settings } = await load("/src/screens/Settings.tsx");
+    const html = render(h(Settings));
+    for (const [name, letters] of [["You: Ryan", "RYAN"], ["Learning for: Lily", "LILY"]]) {
+      const wrap = html.match(new RegExp(`role="img" aria-label="${name}">(.*?)</div>`, "s"));
+      assert.ok(wrap, name);
+      assert.equal([...wrap[1].matchAll(/<span[^>]*set-tile[^>]*>([A-Z])<\/span>/g)].map((m) => m[1]).join(""), letters);
+    }
+  }));
+
+test("flipSequence ends on the real letter, never repeats back to back", () =>
+  withApp(async (load) => {
+    const { flipSequence } = await load("/src/components/settings/flip.ts");
+    for (const letter of ["A", "L", "Z"]) {
+      for (const r of [() => 0, () => 0.999, () => 0.5]) {
+        const seq = flipSequence(letter, 3, r);
+        assert.equal(seq.length, 3);
+        assert.equal(seq.at(-1), letter);
+        seq.forEach((c, i) => i && assert.notEqual(c, seq[i - 1]));
+      }
+    }
+    assert.deepEqual(flipSequence("Q", 1), ["Q"]);
+  }));
+
+test("settings: switch keeps its semantics and carries an aria-hidden glyph in the thumb", () =>
+  withApp(async (load, render, h) => {
+    const { Settings } = await load("/src/screens/Settings.tsx");
+    const html = render(h(Settings));
+    const sw = html.match(/<button[^>]*role="switch"[^>]*>.*?<\/button>/s)[0];
+    assert.match(sw, /aria-checked="(true|false)"/);
+    assert.match(sw, /aria-labelledby="set-motion-label"/);
+    assert.match(sw, /aria-describedby="set-motion-desc"/);
+    assert.match(sw, /set-switch-thumb[^>]*><svg[^>]*aria-hidden="true"/);
+    assert.match(sw, /Off|On/);
+  }));
+
+test("settings: Change/Open keep one accessible name; the slide copy is aria-hidden", () =>
+  withApp(async (load, render, h) => {
+    const { Settings } = await load("/src/screens/Settings.tsx");
+    const html = render(h(Settings));
+    for (const [label, text] of [["Change names or hand", "Change"], ["Open the camera demo", "Open"]]) {
+      const a = html.match(new RegExp(`<a[^>]*aria-label="${label}"[^>]*>(.*?)</a>`, "s"));
+      assert.ok(a, label);
+      assert.match(a[1], new RegExp(`<span>${text}</span><span aria-hidden="true">${text}</span>`));
+    }
+  }));

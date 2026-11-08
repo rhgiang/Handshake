@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { motion } from "motion/react";
+import { SlideLabel } from "../components/settings/SlideLabel";
 import { NameTiles } from "../components/settings/NameTiles";
 import { ReduceMotionSwitch, reduceMotionHelp } from "../components/settings/ReduceMotionSwitch";
 import { useMotionChoice, useReduceMotion } from "../components/motion/MotionProvider";
@@ -57,7 +58,7 @@ export function Settings() {
 
       <Group id="set-profile" title="Profile" index={1}>
         <Row id="set-names" label="Names and hand" desc="Stored in this browser only.">
-          <a className="set-btn set-btn-primary" href="#/welcome" aria-label="Change names or hand">Change</a>
+          <a className="set-btn set-btn-primary" href="#/welcome" aria-label="Change names or hand"><SlideLabel>Change</SlideLabel></a>
         </Row>
       </Group>
 
@@ -69,7 +70,7 @@ export function Settings() {
 
       <Group id="set-camera" title="Camera" index={3}>
         <Row id="set-camera-row" label="Camera demo" desc="Try the camera on any letter, outside a lesson.">
-          <a className="set-btn" href="#/camera-demo" aria-label="Open the camera demo">Open</a>
+          <a className="set-btn" href="#/camera-demo" aria-label="Open the camera demo"><SlideLabel>Open</SlideLabel></a>
         </Row>
       </Group>
 
