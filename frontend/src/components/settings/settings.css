@@ -11,7 +11,7 @@
 .set-person-label { margin: 0; font-size: var(--text-small); font-weight: 700; color: #fff; }
 .set-arrow { display: inline-flex; align-items: center; min-height: 52px; font-size: 1.5rem; font-weight: 800; color: #fff; }
 .set-solo, .set-name-plain { display: inline-flex; align-items: center; min-height: 52px; margin: 0; font-size: 1.25rem; font-weight: 700; color: #fff; }
-.set-chip { margin: 0 0 0 auto; display: inline-flex; align-items: center; gap: var(--space-2); min-height: 32px; padding: 0 var(--space-3); border-radius: var(--radius-pill); border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.12); font-size: var(--text-small); font-weight: 700; color: #fff; }
+.set-chip { margin: 0 0 0 auto; display: inline-flex; align-items: center; gap: var(--space-2); min-height: 32px; padding: 0 var(--space-3); border-radius: var(--radius-pill); border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.08); /* 0.12 in the new design; 0.08 keeps white text 4.5:1 on river blue */ font-size: var(--text-small); font-weight: 700; color: #fff; }
 .set-chip-dot { width: 8px; height: 8px; border-radius: var(--radius-pill); background: var(--brand-2); box-shadow: 0 0 0 2px #fff; }
 
 /* Letter tiles */
@@ -67,7 +67,7 @@
 /* The new colour spreads from the thumb as a circle (clip-path only) */
 .set-switch-fill { position: absolute; inset: 0; border-radius: inherit; background: var(--brand); clip-path: circle(0px at 13px 50%); transition: clip-path 280ms var(--ease-out); }
 .set-switch-slide { position: absolute; top: 1px; left: 1px; width: 24px; height: 24px; }
-.set-switch-thumb { position: relative; display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-pill); background: #fff; color: var(--brand-deep); box-shadow: 0 1px 3px rgba(31, 42, 92, 0.35); transition: scale var(--dur-press) var(--ease-out); }
+.set-switch-thumb { position: relative; display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-pill); background: #fff; color: var(--brand-deep); box-shadow: 0 1px 3px rgba(30, 50, 70, 0.35); transition: scale var(--dur-press) var(--ease-out); }
 .set-switch-thumb svg { grid-area: 1 / 1; }
 .set-switch[aria-checked="true"] .set-switch-track { border-color: var(--brand-2); }
 .set-switch[aria-checked="true"] .set-switch-fill { clip-path: circle(60px at 13px 50%); }

@@ -1,7 +1,6 @@
 import { useEffect, useId, useState, type ReactNode } from "react";
 import { motion } from "motion/react";
 import { useReduceMotion } from "../motion/MotionProvider";
-import { motionTokens } from "../motion/tokens";
 import "./landing.css";
 
 /** True on devices where nothing can hover (phones, tablets): the panel then just shows its content. */
@@ -20,7 +19,7 @@ function useNoHover(): boolean {
  * A quiet panel: at rest it shows only a big title and one line of summary. Move the pointer onto it (or tab into it)
  * and the title fades out while the content fades up in its place; leave and it fades back.
  * The fade is driven by motion (not CSS transitions) so it still plays when the device asks for reduced motion:
- * a fade is not movement, and the 12px rise is the part that stops under reduced motion (lift is 0, so it only fades).
+ * a slow fade is not movement, and the sliding is the part that stops under reduced motion (MotionConfig removes transforms).
  * Nothing is hidden from keyboards or screen readers: the content is always in the page, focusing anything inside it
  * opens the panel, and on touch screens (no hover) the content is shown straight away.
  *
@@ -37,8 +36,7 @@ export function RevealCard({ title, summary, className = "", children }: { title
   const open = noHover || hover || focus;
   // Under reduced motion there is no sliding at all (motion applies transform changes instantly in that mode, which looked like a jump).
   const reduce = useReduceMotion();
-  const lift = reduce ? 0 : motionTokens.distance.enter;
-  const ease = motionTokens.ease.out as unknown as [number, number, number, number];
+  const lift = reduce ? 0 : 18;
   return (
     <motion.section
       className={`lp-reveal ${className}`}
@@ -50,14 +48,14 @@ export function RevealCard({ title, summary, className = "", children }: { title
       onBlurCapture={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setFocus(false)}
       initial={false}
       animate={{ backgroundColor: open ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.45)" }}
-      transition={{ duration: motionTokens.duration.enter, ease }}
+      transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
     >
       <motion.div
         className="lp-reveal-face"
         aria-hidden="true"
         initial={false}
         animate={{ opacity: open ? 0 : 1, y: open ? -lift : 0 }}
-        transition={{ duration: motionTokens.duration.enter, ease }}
+        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
         style={{ willChange: "opacity, transform" }}
       >
         <span className="lp-reveal-title">{title}</span>
@@ -68,7 +66,7 @@ export function RevealCard({ title, summary, className = "", children }: { title
         className="lp-reveal-body"
         initial={false}
         animate={{ opacity: open ? 1 : 0, y: open ? 0 : lift }}
-        transition={{ duration: motionTokens.duration.enter, ease, delay: open ? motionTokens.duration.instant : 0 }}
+        transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1], delay: open ? 0.15 : 0 }}
         style={{ willChange: "opacity, transform" }}
       >
         <h2 id={id} className="lp-reveal-head">

@@ -103,6 +103,7 @@ export function UnitSection(props: { index: number; title: string; goal: string;
                     aria-current={l.state === "current" ? "step" : undefined}
                     onClick={() => l.state !== "locked" && onOpen(l.id)}
                   >
+                    <span className="map-glow" aria-hidden="true" />
                     <span className="map-disc" aria-hidden="true">
                       <span className="map-glyph">{l.state === "done" ? "✓" : l.state === "locked" ? "🔒" : l.id}</span>
                     </span>
