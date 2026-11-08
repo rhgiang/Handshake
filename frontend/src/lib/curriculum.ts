@@ -82,12 +82,13 @@ function optionsFor(letter: string, pool: string[]): string[] {
 // Duolingo-style: sign each new letter once, then mixed practice (identify from the 3D hand, then sign from memory in random order).
 function letterSteps(letters: string[], known: Set<string>): Step[] {
   const steps: Step[] = [];
+  const fresh = letters.filter((l) => !known.has(l)); // letters met earlier (Unit 1) skip "which letter is this?"
   for (const l of letters) {
     steps.push({ kind: "learn", letter: l }, { kind: "practice", letter: l, reps: 1 });
     known.add(l);
   }
   const pool = [...known];
-  if (pool.length > 1) for (const l of letters.slice(0, 2)) steps.push({ kind: "identify", letter: l, options: optionsFor(l, pool) });
+  if (pool.length > 1) for (const l of fresh.slice(0, 2)) steps.push({ kind: "identify", letter: l, options: optionsFor(l, pool) });
   if (letters.length > 1) steps.push({ kind: "mix", letters });
   // Look-alike drills only between letters the learner already knows.
   const pairs = unique(letters.flatMap((l) => (CONFUSABLE[l] ?? []).filter((c) => known.has(c)).map((c) => [l, c].sort().join(""))));
@@ -101,6 +102,9 @@ export function buildCurriculum(p: Personalization): Unit[] {
   const solo = !clean(p.theirName); // learning for yourself: no "their name" lesson and no named conversation
   const known = new Set<string>();
   const words = (id: string) => p.practiceWords?.[id] ?? [];
+  // One practice word per lesson, never the same word twice in the path.
+  const usedWords = new Set<string>();
+  const freshWord = (id: string) => { const w = words(id).find((x) => !usedWords.has(x)); if (w) usedWords.add(w); return w ? [w] : []; };
 
   // ---------- Unit 1: your name ----------
   const myLetters = unique([...me]).filter((l) => !MOVING.includes(l));
@@ -131,7 +135,7 @@ export function buildCurriculum(p: Personalization): Unit[] {
       grading: "auto",
       xp: 10 * letters.length,
       teaches: letters,
-      steps: [...letterSteps(letters, known), ...words(id).slice(0, 1).map((w) => ({ kind: "spell", word: w, showReference: false }) as Step), { kind: "review" }],
+      steps: [...letterSteps(letters, known), ...freshWord(id).map((w) => ({ kind: "spell", word: w, showReference: false }) as Step)],
     });
     // Their name: one fixed place for everyone, right after the last demo family.
     if (fam.id === "fist" && !solo) {
@@ -143,7 +147,7 @@ export function buildCurriculum(p: Personalization): Unit[] {
         scope: "demo",
         grading: "auto",
         xp: 30,
-        steps: [{ kind: "spell", word: them, showReference: true }, ...words(nid).slice(0, 1).map((w) => ({ kind: "spell", word: w, showReference: false }) as Step)],
+        steps: [{ kind: "spell", word: them, showReference: true }, ...freshWord(nid).map((w) => ({ kind: "spell", word: w, showReference: false }) as Step)],
       });
     }
   }
@@ -171,7 +175,7 @@ export function buildCurriculum(p: Personalization): Unit[] {
       signLesson("3.1", "The signs", ["HELLO", "NICE", "MEET", "YOU", "MY", "NAME"], "demo"),
       { id: "3.2", title: "Introduce yourself", summary: `HELLO · NICE MEET YOU · MY NAME ${me}`, scope: "demo", grading: "assisted", xp: 60, steps: [{ kind: "sentence", tokens: ["HELLO", "NICE", "MEET", "YOU", "MY", "NAME", `fs:${me}`], english: `Hello, nice to meet you. My name is ${p.userName || me}.` }] },
       signLesson("3.3", "Being polite", ["PLEASE", "THANK-YOU", "SORRY"], "stretch"),
-      signLesson("3.4", "Asking questions", ["YOU", "YOUR", "HOW", "WHAT"], "stretch", [{ kind: "sentence", tokens: ["YOUR", "NAME", "WHAT"], english: "What's your name? (eyebrows down)" }]),
+      signLesson("3.4", "Asking questions", ["YOUR", "HOW", "WHAT"], "stretch", [{ kind: "sentence", tokens: ["YOUR", "NAME", "WHAT"], english: "What's your name? (eyebrows down)" }]),
       signLesson("3.5", "Answering", ["YES", "NO", "GOOD", "FINE"], "stretch"),
       signLesson("3.6", p.relationship ? `Words for your ${p.relationship}` : "Everyday words", pack, "stretch"),
     ],
