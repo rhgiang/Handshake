@@ -10,6 +10,7 @@ import { SEND_SNAPSHOT, getCoachTip, getHowTo, praise } from "../lib/api";
 import { streakAfter, type Praise } from "../lib/praise";
 import { LessonView } from "../components/LessonView";
 import { SceneView } from "../components/SceneView";
+import { LessonExit } from "../components/LessonExit";
 import { Camera } from "../components/Camera";
 import { AnimatedProgress } from "../components/motion/AnimatedProgress";
 import { createCoachQueue } from "../lib/coachQueue";
@@ -461,6 +462,7 @@ function IdentifyItem({ item, leftHanded, stepLabel, onNext, onMiss }: { item: E
     );
   return (
     <div className="page">
+      <LessonExit />
       <p className="muted">{stepLabel}</p>
       <h1>Which letter is this?</h1>
       <Suspense fallback={<div className="hand3d empty">Loading 3D hand…</div>}>
