@@ -175,7 +175,7 @@ export function buildCurriculum(p: Personalization): Unit[] {
       signLesson("3.1", "The signs", ["HELLO", "NICE", "MEET", "YOU", "MY", "NAME"], "demo"),
       { id: "3.2", title: "Introduce yourself", summary: `HELLO · NICE MEET YOU · MY NAME ${me}`, scope: "demo", grading: "assisted", xp: 60, steps: [{ kind: "sentence", tokens: ["HELLO", "NICE", "MEET", "YOU", "MY", "NAME", `fs:${me}`], english: `Hello, nice to meet you. My name is ${p.userName || me}.` }] },
       signLesson("3.3", "Being polite", ["PLEASE", "THANK-YOU", "SORRY"], "stretch"),
-      signLesson("3.4", "Asking questions", ["YOUR", "HOW", "WHAT"], "stretch", [{ kind: "sentence", tokens: ["YOUR", "NAME", "WHAT"], english: "What's your name? (eyebrows down)" }]),
+      signLesson("3.4", "Asking questions", ["YOU", "YOUR", "HOW", "WHAT"], "stretch", [{ kind: "sentence", tokens: ["YOUR", "NAME", "WHAT"], english: "What's your name? (eyebrows down)" }]),
       signLesson("3.5", "Answering", ["YES", "NO", "GOOD", "FINE"], "stretch"),
       signLesson("3.6", p.relationship ? `Words for your ${p.relationship}` : "Everyday words", pack, "stretch"),
     ],
